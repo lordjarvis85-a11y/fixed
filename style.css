@@ -782,6 +782,7 @@ main {
 
 .activities-carousel-section .carousel-track {
   justify-content: center;
+  animation: none;
 }
 
 .activity-slide {
@@ -789,7 +790,11 @@ main {
   height: 380px;
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
+  margin: 0;
+}
+
+.activities-carousel-section .carousel-track.is-overflowing {
+  justify-content: flex-start;
 }
 
 .activity-status-message {
