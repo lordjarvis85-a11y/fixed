@@ -957,13 +957,13 @@ loadFirebaseConfig().then(firebaseConfig => {
 
 
     // --- Photo File Reader (Image to Base64) ---
-    function handleImageUpload(inputEl, hiddenInputEl, previewEl, previewContainerEl) {
+    function handleImageUpload(inputEl, hiddenInputEl, previewEl, previewContainerEl, maxSizeKb = 800) {
       inputEl.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        if (file.size > 800 * 1024) {
-          alert("Image is too large! Please choose an image smaller than 800KB. 📸");
+        if (file.size > maxSizeKb * 1024) {
+          alert(`Image is too large! Please choose an image smaller than ${maxSizeKb}KB. 📸`);
           inputEl.value = '';
           return;
         }
@@ -988,7 +988,7 @@ loadFirebaseConfig().then(firebaseConfig => {
     }
 
     if (activityPhotoUpload && activityPhotoDataUrl && activityPhotoPreview && activityPhotoPreviewContainer) {
-      handleImageUpload(activityPhotoUpload, activityPhotoDataUrl, activityPhotoPreview, activityPhotoPreviewContainer);
+      handleImageUpload(activityPhotoUpload, activityPhotoDataUrl, activityPhotoPreview, activityPhotoPreviewContainer, 1536);
     }
 
     // --- Add Student Submit Handler ---
@@ -1413,6 +1413,7 @@ loadFirebaseConfig().then(firebaseConfig => {
 
       function startAuto() {
         stopAuto();
+        if (TOTAL < 2) return;
         activityAutoTimer = setInterval(() => {
           goTo(currentIndex + 1);
         }, INTERVAL);
@@ -1455,6 +1456,13 @@ loadFirebaseConfig().then(firebaseConfig => {
       track.addEventListener('mouseenter', () => { stopAuto(); });
       track.addEventListener('mouseleave', () => { startAuto(); });
 
+      if (!track.dataset.activityResizeReady) {
+        track.dataset.activityResizeReady = 'true';
+        window.addEventListener('resize', () => {
+          goTo(currentIndex, false);
+        });
+      }
+
       // Drag / Swipe
       let dragStartX = 0;
       let isDragging = false;
@@ -1488,6 +1496,7 @@ loadFirebaseConfig().then(firebaseConfig => {
       });
 
       // Start auto-play
+      goTo(0, false);
       startAuto();
     }
 
