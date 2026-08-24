@@ -1,4 +1,13 @@
 async function loadFirebaseConfig() {
+  const hasRequiredConfig = config => [
+    config.apiKey,
+    config.authDomain,
+    config.projectId,
+    config.storageBucket,
+    config.messagingSenderId,
+    config.appId
+  ].every(Boolean);
+
   try {
     const endpointResponse = await fetch('/api/firebase-config', { cache: 'no-store' });
     if (endpointResponse.ok) {
@@ -6,16 +15,21 @@ async function loadFirebaseConfig() {
       if (contentType.includes('application/json')) {
         const payload = await endpointResponse.json();
         const config = payload.firebase || payload;
-        if (Object.values(config).every(Boolean)) return config;
+        if (hasRequiredConfig(config)) return config;
       }
     }
   } catch (error) {
     console.warn('Netlify Firebase configuration unavailable; trying .env:', error.message);
   }
 
-  const response = await fetch('.env', { cache: 'no-store' });
+  let response;
+  try {
+    response = await fetch('.env', { cache: 'no-store' });
+  } catch (error) {
+    throw new Error('Firebase configuration is unavailable from Netlify or .env');
+  }
   if (!response.ok) {
-    throw new Error(`Unable to load local .env (${response.status})`);
+    throw new Error('Firebase configuration is unavailable from Netlify or .env');
   }
 
   const env = {};
@@ -34,11 +48,11 @@ async function loadFirebaseConfig() {
     measurementId: env.FIREBASE_MEASUREMENT_ID
   };
 
-  if (Object.values(firebaseConfig).some(value => !value)) {
-    throw new Error('The Firebase configuration in .env is incomplete');
+  if (hasRequiredConfig(firebaseConfig)) {
+    return firebaseConfig;
   }
 
-  return firebaseConfig;
+  throw new Error('Firebase configuration is incomplete in Netlify variables or .env');
 }
 
 function setupPortalNavigation() {
