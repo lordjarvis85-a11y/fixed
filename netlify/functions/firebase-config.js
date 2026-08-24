@@ -9,7 +9,16 @@ exports.handler = async function handler() {
     measurementId: process.env.FIREBASE_MEASUREMENT_ID
   };
 
-  if (Object.values(firebase).some(value => !value)) {
+  const requiredValues = [
+    firebase.apiKey,
+    firebase.authDomain,
+    firebase.projectId,
+    firebase.storageBucket,
+    firebase.messagingSenderId,
+    firebase.appId
+  ];
+
+  if (requiredValues.some(value => !value)) {
     return {
       statusCode: 503,
       headers: { 'Content-Type': 'application/json' },
