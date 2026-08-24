@@ -1399,7 +1399,9 @@ loadFirebaseConfig().then(firebaseConfig => {
       function goTo(index, animate = true) {
         if (TOTAL === 0) return;
         currentIndex = ((index % TOTAL) + TOTAL) % TOTAL;
-        const offset = -(currentIndex * getSlideWidth());
+        const slide = track.querySelector('.activity-slide');
+        const centerOffset = slide ? (track.parentElement.clientWidth - slide.offsetWidth) / 2 : 0;
+        const offset = centerOffset - (currentIndex * getSlideWidth());
         track.style.animation = 'none'; // stop CSS animation
         track.style.transition = animate ? 'transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none';
         track.style.transform = `translateX(${offset}px)`;
