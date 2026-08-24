@@ -785,6 +785,7 @@ main {
   height: 380px;
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
 }
 
 .activity-status-message {
@@ -797,22 +798,26 @@ main {
 }
 
 .activity-slide img {
-  height: 200px;
+  height: 100%;
   object-fit: cover;
-  border-bottom: 3px solid var(--accent-color);
+  border: 0;
 }
 
 .activity-content {
-  padding: 20px;
-  background: #fff;
-  flex-grow: 1;
+  position: absolute;
+  inset: auto 0 0;
+  padding: 70px 20px 20px;
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.86), rgba(2, 6, 23, 0));
+  color: #fff;
+  min-height: 48%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .activity-title {
-  color: var(--secondary-color);
+  color: #fff;
   font-size: 1.3rem;
   font-weight: 800;
   margin-bottom: 10px;
@@ -820,7 +825,7 @@ main {
 }
 
 .activity-desc {
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
   line-height: 1.5;
   margin: 0;
