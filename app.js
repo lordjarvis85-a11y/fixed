@@ -1365,6 +1365,7 @@ loadFirebaseConfig().then(firebaseConfig => {
     `).join('');
 
       activityCarouselTrack.innerHTML = slidesHTML;
+      activityCarouselTrack.dataset.activityCount = activities.length;
 
       // Generate Dots (only for original number of slides)
       activityCarouselDots.innerHTML = activities.map((_, i) => `
@@ -1400,11 +1401,15 @@ loadFirebaseConfig().then(firebaseConfig => {
         if (TOTAL === 0) return;
         currentIndex = ((index % TOTAL) + TOTAL) % TOTAL;
         const slide = track.querySelector('.activity-slide');
-        const centerOffset = slide ? (track.parentElement.clientWidth - slide.offsetWidth) / 2 : 0;
-        const offset = centerOffset - (currentIndex * getSlideWidth());
+        const step = getSlideWidth();
+        const availableWidth = track.parentElement.clientWidth;
+        const contentWidth = TOTAL * step - 20;
+        const isOverflowing = contentWidth > availableWidth;
+        const offset = isOverflowing ? -(currentIndex * step) : 0;
         track.style.animation = 'none'; // stop CSS animation
         track.style.transition = animate ? 'transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none';
-        track.style.transform = `translateX(${offset}px)`;
+        track.style.transform = isOverflowing ? `translateX(${offset}px)` : '';
+        track.classList.toggle('is-overflowing', isOverflowing);
 
         dots.forEach((d, i) => {
           d.classList.toggle('active', i === currentIndex);
